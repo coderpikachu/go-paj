@@ -28,9 +28,6 @@ type Context struct {
 	// 缓存的数据
 	cacheQueryValues url.Values
 
-	// 页面渲染的引擎
-	tplEngine TemplateEngine
-
 	// 用户可以自由决定在这里存储什么，
 	// 主要用于解决在不同 Middleware 之间数据传递的问题
 	// 但是要注意
@@ -114,15 +111,6 @@ func (c *Context) RespOk(msg string) error {
 	c.RespStatusCode = http.StatusOK
 	c.RespData = []byte(msg)
 	return nil
-}
-func (c *Context) Render(tpl string, data any) error {
-	var err error
-	c.RespData, err = c.tplEngine.Render(c.Req.Context(), tpl, data)
-	c.RespStatusCode = 200
-	if err != nil {
-		c.RespStatusCode = 500
-	}
-	return err
 }
 
 // func (c *Context) QueryValueAsInt64(key string) (int64, error) {

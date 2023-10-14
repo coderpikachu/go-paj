@@ -21,15 +21,14 @@ type Server interface {
 	// addRoute(method string, path string, handlers... HandleFunc)
 }
 
-// 确保 HTTPServer 肯定实现了 Server 接口
+// 确保 HTTPSe rver 肯定实现了 Server 接口
 var _ Server = &HTTPServer{}
 
 type ServerOption func(server *HTTPServer)
 
 type HTTPServer struct {
 	router
-	tplEngine TemplateEngine
-	log       Logger
+	log Logger
 }
 
 func NewHTTPServer(opts ...ServerOption) *HTTPServer {
@@ -40,12 +39,6 @@ func NewHTTPServer(opts ...ServerOption) *HTTPServer {
 		opt(s)
 	}
 	return s
-}
-
-func ServerWithTemplateEngine(engine TemplateEngine) ServerOption {
-	return func(server *HTTPServer) {
-		server.tplEngine = engine
-	}
 }
 
 // func (s *HTTPServer) Use(mdls ...Middleware) {
@@ -78,9 +71,8 @@ func (s *HTTPServer) UseAny(path string, mdls ...Middleware) {
 // ServeHTTP HTTPServer 处理请求的入口
 func (s *HTTPServer) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	ctx := &Context{
-		Req:       request,
-		Resp:      writer,
-		tplEngine: s.tplEngine,
+		Req:  request,
+		Resp: writer,
 	}
 
 	// ctx pool.Get()
@@ -156,16 +148,4 @@ func SetDefaultLogger(log Logger) {
 
 type Logger interface {
 	Fatalln(msg string, args ...any)
-}
-
-type HTTPServerV1 struct {
-	router
-	tplEngine TemplateEngine
-	log       Logger
-}
-
-func NewHTTPServerV1(cfgFile string) *HTTPServerV1 {
-	// 这里去读取配置文件
-	// 初始化实例
-	panic("implement me")
 }
