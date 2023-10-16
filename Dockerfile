@@ -25,5 +25,6 @@ ENV TZ Asia/Shanghai
 
 WORKDIR /app
 COPY --from=builder /app/main /app/main
+COPY  my_test.db /app/main
 
 CMD ["./main"]
