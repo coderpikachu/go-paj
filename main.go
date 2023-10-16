@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS my_test_model(
 `
 }
 func myOrmRemoteTest() string {
-	db, _ := my_orm.MyDb("../my_test.db", my_orm.DBWithDialect(my_orm.SQLite3))
+	db, _ := my_orm.MyDb("./my_test.db", my_orm.DBWithDialect(my_orm.SQLite3))
 	_, err := db.Db.Exec("DROP TABLE IF EXISTS `my_test_model`")
 	if err != nil {
 		return "1*"
@@ -37,7 +37,7 @@ func myOrmRemoteTest() string {
 		return "2*"
 	}
 	_, err = db.Db.Exec("INSERT INTO `my_test_model`(`id0`,`first_name`,`age`,`last_name`)"+
-		"VALUES (?,?,?,?)", 14, "Deng", 18, "Ming")
+		"VALUES (?,?,?,?)", 14, "1", 18, "Ming")
 	if err != nil {
 		return "3*"
 	}
