@@ -8,6 +8,8 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN apk update --no-cache && apk add --no-cache tzdata
 
+COPY my_test.db /app/main
+
 WORKDIR /build
 
 ADD go.mod .
@@ -25,6 +27,5 @@ ENV TZ Asia/Shanghai
 
 WORKDIR /app
 COPY --from=builder /app/main /app/main
-COPY  /app/main my_test.db
 
 CMD ["./main"]
