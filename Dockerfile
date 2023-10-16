@@ -7,7 +7,7 @@ ENV GOPROXY https://goproxy.cn,direct
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN apk update --no-cache && apk add --no-cache tzdata
-COPY my_test.db /app
+
 
 WORKDIR /build
 
@@ -17,6 +17,7 @@ RUN go mod download
 
 COPY . .
 RUN go build -ldflags="-s -w" -o /app/main main.go
+COPY my_test.db /app
 
 
 FROM scratch
