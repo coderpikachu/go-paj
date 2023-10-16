@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS my_test_model(
 `
 }
 func myOrmRemoteTest() string {
-	db, _ := my_orm.MyDb("E:\\zz\\0Go\\test\\12paj\\my_test.db", my_orm.DBWithDialect(my_orm.SQLite3))
+	db, _ := my_orm.MyDb("../my_test.db", my_orm.DBWithDialect(my_orm.SQLite3))
 	_, err := db.Db.Exec("DROP TABLE IF EXISTS `my_test_model`")
 	if err != nil {
 		return "1*"
