@@ -38,19 +38,19 @@ func myOrmRemoteTest(c string) string {
 
 	db, _ := my_orm.MyMysql(c, my_orm.DBWithDialect(my_orm.SQLite3))
 
-	//_, err := db.Db.Exec("DROP TABLE IF EXISTS `my_test_model`")
-	//if err != nil {
-	//	return "1*"
-	//}
-	//_, err = db.Db.Exec(MyTestModel{}.CreateSQL())
-	//if err != nil {
-	//	return "2*"
-	//}
-	//_, err = db.Db.Exec("INSERT INTO `my_test_model`(`id0`,`first_name`,`age`,`last_name`)"+
-	//	"VALUES (?,?,?,?)", 14, "2", 18, "Ming")
-	//if err != nil {
-	//	return "3*"
-	//}
+	_, err := db.Db.Exec("DROP TABLE IF EXISTS `my_table`")
+	if err != nil {
+		return "1*"
+	}
+	_, err = db.Db.Exec(MyTable{}.CreateSQL())
+	if err != nil {
+		return "2*"
+	}
+	_, err = db.Db.Exec("INSERT INTO `my_table`(`id`,`name`)"+
+		"VALUES (?,?)", 11, "2")
+	if err != nil {
+		return "3*"
+	}
 
 	res, err := my_orm.NewSelector[MyTable](db).Get(context.Background())
 	if err != nil {
