@@ -46,10 +46,14 @@ func myOrmRemoteTest(c string) string {
 	if err != nil {
 		return "2*"
 	}
-	_, err = db.Db.Exec("INSERT INTO `my_table`(`id`,`name`)"+
-		"VALUES (?,?)", 11, "2")
+	//_, err = db.Db.Exec("INSERT INTO `my_table`(`id`,`name`)"+
+	//	"VALUES (?,?)", 11, "2")
 
-	my_orm.NewInserter[MyTable](db).Exec(context.Background())
+	my_orm.NewInserter[MyTable](db).Values(
+		&MyTable{
+			Id:   1,
+			Name: "Deng",
+		}).Columns("Id", "Name").Exec(context.Background())
 	if err != nil {
 		return "3*"
 	}
