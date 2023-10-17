@@ -261,7 +261,35 @@ func (s *Selector[T]) Get(ctx context.Context) (*T, error) {
 	}
 	return nil, res.Err
 }
+func (s *Selector[T]) GetMyMulti(ctx context.Context) ([]*T, error) {
+	var (
+		m   *model.Model
+		err error
+	)
 
+	// 子查询或者 JOIN 查询，我们无法得知它操作的就近是那张表
+	if s.table == nil {
+		// 没有指定表
+		s.table = TableOf(new(T))
+	}
+
+	if tbl, ok := s.table.(Table); ok {
+		m, err = s.r.Get(tbl.entity)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	res := getMulti[T](ctx, s.core, s.sess, &QueryContext{
+		builder: s,
+		Type:    "SELECT",
+		Model:   m,
+	})
+	if res.Result != nil {
+		return res.Result.([]*T), res.Err
+	}
+	return nil, res.Err
+}
 func (s *Selector[T]) GetMulti(ctx context.Context) ([]*T, error) {
 	var db sql.DB
 	q, err := s.Build()

@@ -38,3 +38,4 @@ type QueryResult struct {
 type Middleware func(next HandleFunc) HandleFunc
 
 type HandleFunc func(ctx context.Context, qc *QueryContext) *QueryResult
+type MultiHandleFunc func(ctx context.Context, qc *QueryContext) []*QueryResult

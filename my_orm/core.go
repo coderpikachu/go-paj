@@ -66,6 +66,50 @@ func getHandler[T any](ctx context.Context,
 		Err:    err,
 	}
 }
+func getMultiHandler[T any](ctx context.Context,
+	sess Session,
+	c core,
+	qc *QueryContext) *QueryResult {
+
+	q, err := qc.Query()
+	if err != nil {
+		return &QueryResult{
+			Err: err,
+		}
+	}
+	rows, err := sess.queryContext(ctx, q.SQL, q.Args...)
+	if err != nil {
+		return &QueryResult{
+			Err: err,
+		}
+	}
+
+	//if !rows.Next() {
+	//	return &QueryResult{
+	//		Err: ErrNoRows,
+	//	}
+	//}
+
+	res := make([]*T, 0)
+
+	for rows.Next() {
+		tp := new(T)
+		meta, err := c.r.Get(tp)
+		if err != nil {
+			return &QueryResult{
+				Err: err,
+			}
+		}
+		val := c.ValCreator(tp, meta)
+		err = val.SetColumns(rows)
+		res = append(res, tp)
+	}
+
+	return &QueryResult{
+		Result: res,
+		Err:    err,
+	}
+}
 
 func get[T any](ctx context.Context, c core, sess Session, qc *QueryContext) *QueryResult {
 	var handler HandleFunc = func(ctx context.Context, qc *QueryContext) *QueryResult {
@@ -78,9 +122,16 @@ func get[T any](ctx context.Context, c core, sess Session, qc *QueryContext) *Qu
 	return handler(ctx, qc)
 }
 
-// func getMulti[T any](ctx context.Context, c core, sess Session, qc *QueryContext) *QueryResult {
-//
-// }
+func getMulti[T any](ctx context.Context, c core, sess Session, qc *QueryContext) *QueryResult {
+	var handler HandleFunc = func(ctx context.Context, qc *QueryContext) *QueryResult {
+		return getMultiHandler[T](ctx, sess, c, qc)
+	}
+	ms := c.ms
+	for i := len(ms) - 1; i >= 0; i-- {
+		handler = ms[i](handler)
+	}
+	return handler(ctx, qc)
+}
 
 func exec(ctx context.Context, sess Session, c core, qc *QueryContext) Result {
 	var handler HandleFunc = func(ctx context.Context, qc *QueryContext) *QueryResult {

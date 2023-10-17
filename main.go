@@ -54,15 +54,20 @@ func myOrmRemoteTest(c string) string {
 			Id:   1,
 			Name: "Deng",
 		}).Columns("Id", "Name").Exec(context.Background())
+	my_orm.NewInserter[MyTable](db).Values(
+		&MyTable{
+			Id:   2,
+			Name: "Ming",
+		}).Columns("Id", "Name").Exec(context.Background())
 	if err != nil {
 		return "3*"
 	}
 
-	res, err := my_orm.NewSelector[MyTable](db).Get(context.Background())
+	ress, err := my_orm.NewSelector[MyTable](db).GetMyMulti(context.Background())
 	if err != nil {
 		return "4*"
 	}
-	return res.Name
+	return ress[0].Name + " " + ress[1].Name
 }
 func main() {
 	println("hello paj!")
