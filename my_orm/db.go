@@ -40,6 +40,13 @@ func MyDb(dbStr string, opts ...DBOption) (*DB, error) {
 	}
 	return OpenDB(db, opts...)
 }
+func MyMysql(dbStr string, opts ...DBOption) (*DB, error) {
+	db, err := sql.Open("mysql", dbStr)
+	if err != nil {
+		return nil, err
+	}
+	return OpenDB(db, opts...)
+}
 func Open(driver string, dsn string, opts ...DBOption) (*DB, error) {
 	//db, err := sql.Open(driver, dsn)
 	db, err := sql.Open("sqlite3", "./my_test.db")
